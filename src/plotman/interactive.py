@@ -254,8 +254,8 @@ def curses_main(stdscr):
 
         # These are useful for debugging.
         # header_win.addnstr('  term size: (%d, %d)' % (n_rows, n_cols), linecap)  # Debuggin
-        # if pressed_key:
-            # header_win.addnstr(' (keypress %s)' % str(pressed_key), linecap)
+        if pressed_key:
+            header_win.addnstr(' (keypress %s)' % str(pressed_key), linecap)
         header_win.addnstr(2, 0, 'Prefixes:', linecap, curses.A_BOLD)
         header_win.addnstr('  tmp=', linecap, curses.A_BOLD)
         header_win.addnstr(tmp_prefix, linecap)
@@ -339,6 +339,11 @@ def curses_main(stdscr):
         elif key == ord('a'):
             archiving_active = not archiving_active
             pressed_key = 'a'
+        elif key == ord('r'):
+            cfg = configuration.get_validated_configs()
+            archiving_configured = cfg.directories.archive is not None
+            archiving_active = archiving_configured
+            pressed_key = 'r'
         elif key == ord('q'):
             break
         else:
