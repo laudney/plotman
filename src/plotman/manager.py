@@ -82,7 +82,7 @@ def maybe_start_new_plot(dir_cfg, sched_cfg, plotting_cfg):
         tmp_to_all_phases = [(d, job.job_phases_for_tmpdir(d, jobs)) for d in dir_cfg.tmp]
         eligible = [ (d, phases) for (d, phases) in tmp_to_all_phases
                 if phases_permit_new_job(phases, d, sched_cfg, dir_cfg) ]
-        rankable = [ (d, phases[0]) if phases else (d, (999, 999))
+        rankable = [ (d, len(phases)) if phases else (d, 0)
                 for (d, phases) in eligible ]
         dir2ph = {d: ph for (d, ph) in dstdirs_to_youngest_phase(jobs).items()
                   if (d in dir_cfg.dst and plot_util.is_valid_plot_dst(d, sched_cfg, jobs))}
@@ -94,8 +94,8 @@ def maybe_start_new_plot(dir_cfg, sched_cfg, plotting_cfg):
         elif not eligible:
             wait_reason = 'no eligible tempdirs'
         else:
-            # Plot to oldest tmpdir.
-            tmpdir = max(rankable, key=operator.itemgetter(1))[0]
+            # Plot to the least used tmpdir.
+            tmpdir = min(rankable, key=operator.itemgetter(1))[0]
 
             if unused_dirs:
                 dstdir = random.choice(unused_dirs)
